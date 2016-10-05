@@ -1,0 +1,4 @@
+sudo docker run -ti --rm -v "$PWD:/app/worker" -v "$HOME/.ivy2":/root/.ivy2 -v "$HOME/.m2":/root/.m2 1science/sbt:0.13.8-oracle-jre-8 /bin/bash
+
+Note that when building in the encrypted home directory, sbt gives an error due to zipped files being too long.
+

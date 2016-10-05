@@ -1,0 +1,7 @@
+version: '2'
+services:
+  loader:
+    image: blawlor/kgd-loader-agent
+    environment:
+      KAFKA_HOST: ${KAFKA_HOST}
+      KAFKA_PORT: ${KAFKA_PORT}

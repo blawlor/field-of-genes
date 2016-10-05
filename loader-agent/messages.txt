@@ -1,0 +1,17 @@
+{"id":"1", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"0-1"}
+{"id":"2", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"2-3"}
+{"id":"3", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"4-5"}
+{"id":"4", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"6-7"}
+{"id":"5", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"8-9"}
+{"id":"6", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"10-11"}
+{"id":"7", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"12-13"}
+{"id":"8", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"14-15"}
+{"id":"9", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"16-17"}
+{"id":"10", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"18-19"}
+{"id":"11", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"20-21"}
+{"id":"12", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"22-23"}
+{"id":"13", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"24-25"}
+{"id":"14", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"26-27"}
+{"id":"15", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"28-29"}
+{"id":"16", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-range":"30-31"}
+

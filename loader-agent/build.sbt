@@ -1,4 +1,4 @@
-name := "kdg-loader-agent"
+name := "loader-agent"
 
 version := "1.0"
 
@@ -25,7 +25,7 @@ libraryDependencies ++= Seq(
   "junit" % "junit" % "4.11" % "test",
   "com.novocode" % "junit-interface" % "0.10" % "test",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
-  "ie.blawlor.kgd" % "kafka-genomic-database" % "1.0-SNAPSHOT" excludeAll(
+  "ie.blawlor.fieldofgenes" % "loader" % "1.0-SNAPSHOT" excludeAll(
     ExclusionRule(organization = "ch.qos.logback"),
     ExclusionRule(organization = "org.apache.logging.log4j"),
     ExclusionRule(organization = "org.slf4j")

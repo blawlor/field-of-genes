@@ -4,22 +4,17 @@ import akka.actor._
 import akka.kafka.scaladsl.{Consumer, Producer}
 import akka.kafka.{ConsumerSettings, ProducerMessage, ProducerSettings, Subscriptions}
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Sink
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.Logger
-import ie.blawlor.kgd.KGDLoader
+import ie.blawlor.fieldofgenes.RefSeqLoader
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
 import org.slf4j.LoggerFactory
 import scopt.OptionParser
 
-import scala.concurrent.Future
-
 
 class SettingsImpl(config: Config) extends Extension {
-  val KafkaPort: Int = config.getInt("kgd.kafka.port")
-  val KafkaHost: String = config.getString("kgd.kafka.host")
 }
 
 object Settings extends ExtensionId[SettingsImpl] with ExtensionIdProvider {
@@ -35,7 +30,6 @@ object Settings extends ExtensionId[SettingsImpl] with ExtensionIdProvider {
 object Main {
   val logger = Logger(LoggerFactory.getLogger(this.getClass))
   val MAX_CONCURRENT_PRODUCERS = 1
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   case class Parameters(kafkaPort: Int = 9092,
                         kafkaHost: String = "127.0.0.1")
@@ -65,27 +59,26 @@ object Main {
         logger.warn(s"Agent $agentid is about to create a consumer of kgd-load topic on $kafkaHost server using port $kafkaPort")
         val consumerSettings = ConsumerSettings(system, new StringDeserializer, new StringDeserializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)
-          .withGroupId("group1")
+          .withGroupId("loader")
           .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
         val producerSettings = ProducerSettings(system, new StringSerializer, new StringSerializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)
         val subscription = Subscriptions.topics("kgd-load")
+
         Consumer.committableSource(consumerSettings, subscription)
-          .map { commitableMessage =>
-            //TODO Make this more 'stream-like'?
-            logger.warn(s"Doing work with ${commitableMessage.record.value()}")
-            val resultString = performWork(commitableMessage.record.value, kafkaHost, kafkaPort)
+          .map { committableMessage =>
+            logger.warn(s"Doing work with ${committableMessage.record.value()}")
+            val resultString = performWork(committableMessage.record.value, kafkaHost, kafkaPort)
             ProducerMessage.Message(new ProducerRecord[String, String](
               "kgd-load-res",
-              resultString), commitableMessage.committableOffset)
+              resultString), committableMessage.committableOffset)
           }
           .runWith(Producer.commitableSink(producerSettings))
       case None =>
     }
   }
 
-
   def performWork(instruction: String, kafkaHost: String, kafkaPort: Int):String= {
-    KGDLoader.load(instruction, "kgd", kafkaHost + ":" + kafkaPort)
+    RefSeqLoader.load(instruction, "ref-seq", kafkaHost + ":" + kafkaPort)
   }
 }

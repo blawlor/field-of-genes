@@ -1,4 +1,4 @@
-FROM biodckr/blast:2.2.31-bl
+FROM blawlor/blast:2.2.31-bl
 
 # Java is already installed
 

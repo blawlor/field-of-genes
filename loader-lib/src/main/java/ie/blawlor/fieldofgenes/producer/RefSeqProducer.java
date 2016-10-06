@@ -1,10 +1,9 @@
-package ie.blawlor.kgd.producer;
+package ie.blawlor.fieldofgenes.producer;
 
 import net.sf.jfasta.FASTAElement;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -19,7 +18,7 @@ public class RefSeqProducer {
     private final String id;
     private final String urlRoot;
     private final String fileTemplate;
-    private final String entryRange;
+    private final String entryNumber;
     private final KafkaProducer<String, String> kafkaProducer;
     private static final int BUFFER_SIZE = 4096;
     private static final String DOWNLOADS_DIR = "downloads";
@@ -32,7 +31,16 @@ public class RefSeqProducer {
         id = jsonObject.getString("id");
         urlRoot = jsonObject.getString("url-root");
         fileTemplate = jsonObject.getString("file-template");
-        entryRange = jsonObject.getString("entry-range");
+        entryNumber = jsonObject.getString("entry-range");
+    }
+
+    public RefSeqProducer(String dbDescription) {
+        this.kafkaProducer = null;
+        final JSONObject jsonObject = new JSONObject(dbDescription);
+        id = jsonObject.getString("id");
+        urlRoot = jsonObject.getString("url-root");
+        fileTemplate = jsonObject.getString("file-template");
+        entryNumber = jsonObject.getString("entry-number");
     }
 
     public String getId() {
@@ -43,27 +51,18 @@ public class RefSeqProducer {
         kafkaProducer.close();
     }
 
-    public void loadDB(String topic) throws IOException {
-        List<RemoteDatabase> dbs = prepareDatabases(urlRoot, fileTemplate, entryRange);
-        for(RemoteDatabase db: dbs){
-            System.out.println("Downloading " + db.getUrl());
-            downloadFtpUrl(db.getUrl(), db.getRootName());
-            File fastaFile = new File(DATABASES_ROOT_DIR + "/" +db.getRootName()+".fasta");
-            sendFastaFile(fastaFile, topic);
-        }
+    public File downloadDB() throws IOException {
+        RemoteDatabase db = prepareDatabase(urlRoot, fileTemplate, entryNumber);
+        System.out.println("Downloading " + db.getUrl());
+        downloadFtpUrl(db.getUrl(), db.getRootName());
+        return new File(DATABASES_ROOT_DIR + "/" +db.getRootName()+".fasta");
     }
 
-    private static List<RemoteDatabase> prepareDatabases(String urlBase, String fileTemplate, String entryRange){
-        String[] startStop = entryRange.split("-");
-        int startIndex = Integer.valueOf(startStop[0]);
-        int stopIndex = Integer.valueOf(startStop[1]);
-        List<RemoteDatabase> databases = new ArrayList<>();
-        for (int index = startIndex; index <= stopIndex; index++){
-            String rootName = generateRootFileName(fileTemplate, index);
-            String url = generateUrl(urlBase, fileTemplate, index);
-            databases.add(new RemoteDatabase(rootName, url));
-        }
-        return databases;
+    private static RemoteDatabase prepareDatabase(String urlBase, String fileTemplate, String entryNumber){
+        int index = Integer.valueOf(entryNumber);
+        String rootName = generateRootFileName(fileTemplate, index);
+        String url = generateUrl(urlBase, fileTemplate, index);
+        return new RemoteDatabase(rootName, url);
     }
 
     private void downloadFtpUrl(String ftpUrl, String rootFileName) {
@@ -145,7 +144,7 @@ public class RefSeqProducer {
         }
     }
 
-    public void sendFastaFile(File fastaFile, String topic) throws IOException {
+    public void writeFastaToTopic(File fastaFile, String topic) throws IOException {
         System.out.println("Sending file " + fastaFile);
         fastaFile.getParentFile().mkdirs();
         FileInputStream fis = new FileInputStream(fastaFile);
@@ -202,29 +201,6 @@ public class RefSeqProducer {
         fastaFile.delete();
     }
 
-    protected static List<KeySequence> breakDownSequence(FASTAElement element){
-        String keyRoot = element.getHeader();
-        String sequence = element.getSequence();
-        List<KeySequence> result = new LinkedList<>();
-        int sequenceLength = sequence.length();
-        int segmentIndex = 0;
-        int start = 0;
-        int end = start + MAX_RECORD_SIZE;
-        while (end < sequenceLength){
-            result.add(new KeySequence(createSequenceKeyFromRoot(keyRoot, segmentIndex),
-                    sequence.substring(start, end)));
-            start = start + MAX_RECORD_SIZE;
-            end = start + MAX_RECORD_SIZE;
-            segmentIndex++;
-        }
-        // Catch the overshoot.
-        if (start < sequenceLength) {
-            result.add(new KeySequence(createSequenceKeyFromRoot(keyRoot, segmentIndex),
-                    sequence.substring(start, sequenceLength)));
-        }
-        return result;
-    }
-
     private static String createSequenceKeyFromRoot(String keyRoot, int index){
         String[] keyElements = keyRoot.split("\\|");
         StringBuilder builder = new StringBuilder();
@@ -243,11 +219,6 @@ public class RefSeqProducer {
         }
         return builder.toString();
 
-    }
-
-    private String createKey(String fastaHeader){
-        String[] elements = fastaHeader.split("|");
-        return elements[3];
     }
 
     private static void cleanDirectory(String directory){
@@ -293,21 +264,4 @@ public class RefSeqProducer {
         }
     }
 
-    static class KeySequence {
-        private final String key;
-        private final String sequence;
-
-        public KeySequence(String key, String sequence) {
-            this.key = key;
-            this.sequence = sequence;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getSequence() {
-            return sequence;
-        }
-    }
 }

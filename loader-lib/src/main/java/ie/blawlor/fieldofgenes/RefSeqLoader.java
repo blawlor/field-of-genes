@@ -1,10 +1,11 @@
-package ie.blawlor.kgd;
+package ie.blawlor.fieldofgenes;
 
-import ie.blawlor.kgd.producer.RefSeqProducer;
+import ie.blawlor.fieldofgenes.producer.RefSeqProducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,6 +13,9 @@ import java.util.Properties;
 
 public class RefSeqLoader {
 
+    /**
+     * Use this to download an FTP file and then write the contents to the given topic.
+     */
     public static String load(String instruction, String topic, String kafkaHostAndPort){
 
         Properties props = new Properties();
@@ -23,7 +27,8 @@ public class RefSeqLoader {
         RefSeqProducer refSeqProducer = new RefSeqProducer(instruction, new KafkaProducer<>(props));
         long started = System.currentTimeMillis();
         try {
-            refSeqProducer.loadDB(topic);
+            File downloadedFile = refSeqProducer.downloadDB();
+            refSeqProducer.writeFastaToTopic(downloadedFile, topic);
             long ended = System.currentTimeMillis();
             long elapsed = ended - started;
             return successMessage(refSeqProducer.getId(), elapsed);
@@ -35,7 +40,16 @@ public class RefSeqLoader {
         }
     }
 
-    public static String successMessage(String id, long elapsed){
+    /**
+     * Use this just to download the FTP file.
+     * @param instruction
+     */
+    public static File download(String instruction) throws IOException{
+        RefSeqProducer refSeqProducer = new RefSeqProducer(instruction);
+        return refSeqProducer.downloadDB();
+    }
+
+        public static String successMessage(String id, long elapsed){
         return "{\"id\":" + id +
                 "\"result\": \"Success\"" +
                 "\"finished\": \""+ LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) +"\"" +
@@ -45,16 +59,12 @@ public class RefSeqLoader {
 
 
 
-    public static String recreateDBDescription(String id, String range){
+    public static String recreateDBDescription(String id, String entryNumber){
         return "{\n" +
-                "  \"topics\": [\n" +
-                "    {\n" +
                 "      \"id\" : \""+id+"\",\n" +
                 "      \"url-root\": \"ftp://ftp.ncbi.nlm.nih.gov/blast/db/\",\n" +
                 "      \"file-template\": \"refseq_genomic.NNN.tar.gz\",\n" +
-                "      \"entry-range\": \""+range+"\",\n" +
-                "    }\n" +
-                "  ]\n" +
+                "      \"entry-number\": \""+entryNumber+"\",\n" +
                 "}";
     }
 }

@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ie.blawlor.kgd</groupId>
-    <artifactId>kafka-genomic-database</artifactId>
+    <groupId>ie.blawlor.fieldofgenes</groupId>
+    <artifactId>loader</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -45,9 +45,9 @@
             <version>4.2.4</version>
         </dependency>
         <dependency>
-            <groupId>org.nanohttpd</groupId>
-            <artifactId>nanohttpd</artifactId>
-            <version>2.2.0</version>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.3.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -79,13 +79,22 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ie.blawlor.kgd.producer.Main</mainClass>
+                            <mainClass>ie.blawlor.fieldofgenes.producer.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

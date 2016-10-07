@@ -28,14 +28,16 @@ public class InstructionProducer {
             while (line != null && linesRead < numberOfLines) {
                 ProducerRecord<String, String> producerRecord =
                         new ProducerRecord<>(topic,
+                                key,
                                 "" + key,
                                 line);
-//                kafkaProducer.send(producerRecord);
+                kafkaProducer.send(producerRecord);
                 System.out.println(producerRecord.toString());
                 key++;
                 linesRead++;
                 line = br.readLine();
             }
+
         } finally {
             br.close();
             close();

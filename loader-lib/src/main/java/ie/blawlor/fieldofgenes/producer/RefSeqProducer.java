@@ -91,9 +91,9 @@ public class RefSeqProducer {
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, bytesRead);
         }
+        System.out.println("FTP Download complete");
         inputStream.close();
         outputStream.close();
-        System.out.println("FTP Download complete");
     }
 
     private void unzip(String rootFileName) throws IOException {

@@ -2,7 +2,6 @@ package ie.blawlor.fieldofgenes.producer;
 
 import ie.blawlor.fieldofgenes.RefSeqLoader;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +30,29 @@ public class Main {
             executionOrder.add(threadEntryNumbers);
         }
 
-        for (List<Integer> thread: executionOrder){
-            DownloadThread t = new DownloadThread(thread);
-            (new Thread(t)).start();
+        List<Thread> threads = new ArrayList<>();
+        long startTime = System.currentTimeMillis();
+        for (List<Integer> filesList: executionOrder){
+            Thread t = new Thread(new DownloadRunnable(filesList));
+            t.start();
+            threads.add(t);
         }
+        try{
+            for (Thread t: threads){
+                t.join();
+            }
+        } catch(InterruptedException e){
+            //Something went wrong
+            System.out.println("Thread was interrupted: " + e);
+            throw new RuntimeException(e);
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("Total elapsed time (ms) is " + (endTime - startTime));
     }
 
-    private static class DownloadThread implements Runnable {
+    private static class DownloadRunnable implements Runnable {
         private final List<Integer> files;
-        public DownloadThread(List<Integer> files) {
+        public DownloadRunnable(List<Integer> files) {
             System.out.println("Creating new thread with " + files.size() + " files");
             this.files = files;
         }
@@ -53,8 +66,10 @@ public class Main {
                     RefSeqLoader.download(instruction);
                 }
             } catch (Exception ex) {
+                System.out.println("Exception during download: " + ex);
                 Thread t = Thread.currentThread();
                 t.getUncaughtExceptionHandler().uncaughtException(t, ex);
+
             }
         }
     }

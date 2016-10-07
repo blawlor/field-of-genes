@@ -59,7 +59,7 @@ object Main {
         logger.warn(s"Agent $agentid is about to create a consumer of kgd-load topic on $kafkaHost server using port $kafkaPort")
         val consumerSettings = ConsumerSettings(system, new StringDeserializer, new StringDeserializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)
-          .withGroupId("loader")
+          .withGroupId("group1")
           .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
         val producerSettings = ProducerSettings(system, new StringSerializer, new StringSerializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)

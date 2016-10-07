@@ -242,8 +242,7 @@ public class RefSeqProducer {
     }
 
     private static String generateBaseFileName(String rootFileName){
-        int index = rootFileName.lastIndexOf('.');
-        return rootFileName.substring(0, index);
+        return rootFileName;
     }
 
     private static class RemoteDatabase {

@@ -4,5 +4,5 @@ FROM blawlor/blast:2.2.31-bl
 
 ADD target/*-jar-with-dependencies.jar experiment.jar
 
-ENTRYPOINT ["java", "-Xms512m", "-Xmx2048m", "-jar",  "experiment.jar"]
+ENTRYPOINT ["java", "-Xms1024m", "-Xmx4g", "-jar",  "experiment.jar"]
 

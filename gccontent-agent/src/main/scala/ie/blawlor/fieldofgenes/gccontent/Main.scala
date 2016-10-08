@@ -90,7 +90,7 @@ object Main {
     val subscription = Subscriptions.topics("ref-seq")
     Consumer.committableSource(consumerSettings, subscription)
       .map { committableMessage =>
-        val resultString = ""
+        val resultString = ""+GCContent.calculateGC(committableMessage.record.value())
         ProducerMessage.Message(new ProducerRecord[String, String](
           "ref-seq-gccontent",
           resultString), committableMessage.committableOffset)

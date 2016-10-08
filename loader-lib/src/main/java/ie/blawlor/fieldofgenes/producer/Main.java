@@ -45,6 +45,9 @@ public class Main {
             //Something went wrong
             System.out.println("Thread was interrupted: " + e);
             throw new RuntimeException(e);
+        } catch (Throwable t){
+            System.out.println("Something went wrong: " + t);
+            throw t;
         }
         long endTime = System.currentTimeMillis();
         System.out.println("Total elapsed time (ms) is " + (endTime - startTime));
@@ -65,7 +68,7 @@ public class Main {
                     System.out.println(instruction);
                     RefSeqLoader.download(instruction);
                 }
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 System.out.println("Exception during download: " + ex);
                 Thread t = Thread.currentThread();
                 t.getUncaughtExceptionHandler().uncaughtException(t, ex);

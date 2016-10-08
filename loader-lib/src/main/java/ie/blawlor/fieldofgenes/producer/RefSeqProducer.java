@@ -22,7 +22,7 @@ public class RefSeqProducer {
     private final KafkaProducer<String, String> kafkaProducer;
     private static final int BUFFER_SIZE = 4096;
     private static final String DOWNLOADS_DIR = "downloads";
-    private static final String DATABASES_ROOT_DIR = "databases";
+    public static final String DATABASES_ROOT_DIR = "databases";
     private static final int MAX_RECORD_SIZE = 100000;
 
     public RefSeqProducer(String dbDescription, KafkaProducer<String, String> kafkaProducer) {
@@ -232,7 +232,7 @@ public class RefSeqProducer {
         return urlBase + generateSourceFileName(fileTemplate, index);
     }
 
-    private static String generateSourceFileName(String fileTemplate, int index){
+    public static String generateSourceFileName(String fileTemplate, int index){
         String prefix = index < 10?"0":"";
         return fileTemplate.replace("NNN", prefix+index);
     }

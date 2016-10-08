@@ -1,0 +1,7 @@
+version: '2'
+services:
+  loader:
+    image: blawlor/gccontent-agent
+    environment:
+      KAFKA_HOST: ${KAFKA_HOST}
+      KAFKA_PORT: ${KAFKA_PORT}

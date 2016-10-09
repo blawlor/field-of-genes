@@ -31,16 +31,11 @@ public class RefSeqProducer {
         id = jsonObject.getString("id");
         urlRoot = jsonObject.getString("url-root");
         fileTemplate = jsonObject.getString("file-template");
-        entryNumber = jsonObject.getString("entry-range");
+        entryNumber = jsonObject.getString("entry-number");
     }
 
     public RefSeqProducer(String dbDescription) {
-        this.kafkaProducer = null;
-        final JSONObject jsonObject = new JSONObject(dbDescription);
-        id = jsonObject.getString("id");
-        urlRoot = jsonObject.getString("url-root");
-        fileTemplate = jsonObject.getString("file-template");
-        entryNumber = jsonObject.getString("entry-number");
+        this(dbDescription, null);
     }
 
     public String getId() {

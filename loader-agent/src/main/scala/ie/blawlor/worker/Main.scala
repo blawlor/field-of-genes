@@ -63,14 +63,14 @@ object Main {
           .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
         val producerSettings = ProducerSettings(system, new StringSerializer, new StringSerializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)
-        val subscription = Subscriptions.topics("kgd-load")
+        val subscription = Subscriptions.topics("loader")
 
         Consumer.committableSource(consumerSettings, subscription)
           .map { committableMessage =>
             logger.warn(s"Doing work with ${committableMessage.record.value()}")
             val resultString = performWork(committableMessage.record.value, kafkaHost, kafkaPort)
             ProducerMessage.Message(new ProducerRecord[String, String](
-              "kgd-load-res",
+              "loader-res",
               resultString), committableMessage.committableOffset)
           }
           .runWith(Producer.commitableSink(producerSettings))

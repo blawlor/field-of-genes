@@ -12,7 +12,7 @@ services:
       - "9092"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "kgd-load:24:1,ref-seq:48:1,gccontent:24:1"
+      KAFKA_CREATE_TOPICS: "loader:24:1,ref-seq:48:1,gccontent:24:1"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:

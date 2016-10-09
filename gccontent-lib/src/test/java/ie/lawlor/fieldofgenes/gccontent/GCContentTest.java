@@ -4,6 +4,7 @@ import ie.blawlor.fieldofgenes.gccontent.GCContent;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -19,7 +20,8 @@ public class GCContentTest {
     @Test
     public void calculateGCFile() throws Exception {
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("sample.fasta").getFile());
+        URL resource = classLoader.getResource("sample.fasta");
+        File file = new File(resource.getFile());
         List<Double> results = GCContent.calculateGC(file);
         assertEquals(1, results.size());
         double ratio = results.get(0);

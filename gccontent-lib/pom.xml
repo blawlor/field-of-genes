@@ -79,7 +79,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ie.blawlor.fieldofgenes.producer.Main</mainClass>
+                            <mainClass>ie.blawlor.fieldofgenes.gccontent.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

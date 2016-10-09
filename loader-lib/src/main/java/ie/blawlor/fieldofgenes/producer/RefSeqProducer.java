@@ -23,7 +23,7 @@ public class RefSeqProducer {
     private static final int BUFFER_SIZE = 4096;
     private static final String DOWNLOADS_DIR = "downloads";
     public static final String DATABASES_ROOT_DIR = "databases";
-    private static final int MAX_RECORD_SIZE = 100000;
+    public static final int MAX_RECORD_SIZE = 100000;
 
     public RefSeqProducer(String dbDescription, KafkaProducer<String, String> kafkaProducer) {
         this.kafkaProducer = kafkaProducer;
@@ -147,10 +147,9 @@ public class RefSeqProducer {
     public void writeFastaToTopic(File fastaFile, String topic) throws IOException {
         System.out.println("Sending file " + fastaFile);
         fastaFile.getParentFile().mkdirs();
+
         FileInputStream fis = new FileInputStream(fastaFile);
-
         BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-
         String line = br.readLine();
         boolean fileNotComplete = true;
         String keyRoot = "";
@@ -165,10 +164,11 @@ public class RefSeqProducer {
                     // Iterate here until we end the file or find a new line with key
                     String key = createSequenceKeyFromRoot(keyRoot, subsequenceNumber);
                     StringBuilder currentSequence = new StringBuilder();
-                    while ((line = br.readLine()) != null &&
+                    while (line != null &&
                             !line.startsWith(">") &&
                             currentSequence.length() < (MAX_RECORD_SIZE - line.length())) {
                         currentSequence.append(line);
+                        line = br.readLine();
                     }
                     if (line == null) {
                         sequenceNotComplete = false;
@@ -183,11 +183,7 @@ public class RefSeqProducer {
                         // Don't want to lose last line
                         currentSequence.append(line);
                     }
-                    ProducerRecord<String, String> producerRecord =
-                            new ProducerRecord<>(topic,
-                                    key,
-                                    currentSequence.toString());
-                    kafkaProducer.send(producerRecord);
+                    processSequence(topic, key, currentSequence);
                 }
             } else if (line == null){
                 fileNotComplete = false;
@@ -199,6 +195,14 @@ public class RefSeqProducer {
 
         br.close();
         fastaFile.delete();
+    }
+
+    private void processSequence(String topic, String key, StringBuilder sequence){
+        ProducerRecord<String, String> producerRecord =
+                new ProducerRecord<>(topic,
+                        key,
+                        sequence.toString());
+        kafkaProducer.send(producerRecord);
     }
 
     private static String createSequenceKeyFromRoot(String keyRoot, int index){

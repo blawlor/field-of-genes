@@ -21,7 +21,7 @@ public class Main {
         FileThreadRunner.performRun((list) -> new DownloadRunnable(list),
                 numberOfThreads,
                 numberOfFiles);
-
+        System.out.println("About to run GCContent on the downloaded files");
         FileThreadRunner.performRun((list) -> new GCContentRunnable(list),
                 numberOfThreads,
                 numberOfFiles);
@@ -42,6 +42,7 @@ public class Main {
             try {
                 for (Integer e : files) {
                     File genrefFile = new File(RefSeqProducer.DATABASES_ROOT_DIR + "/" +createRootName(e)+".fasta");
+                    System.out.println("About to calculate the GC Content for file " + genrefFile);
                     List<Double> ratios = GCContent.calculateGC(genrefFile);
                     FileWriter writer = new FileWriter(RefSeqProducer.DATABASES_ROOT_DIR + "/" +createRootName(e)+".gc");
                     for(Double ratio: ratios) {

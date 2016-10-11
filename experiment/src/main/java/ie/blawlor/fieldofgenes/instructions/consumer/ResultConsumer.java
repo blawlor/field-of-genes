@@ -22,7 +22,10 @@ public class ResultConsumer {
         int messagesReceived = 0;
         while (messagesReceived < messagesExpected) {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
-            messagesReceived += records.count();
+            if (records.count() > 0) {
+                System.out.println("Received " + records.count() + " responses");
+                messagesReceived += records.count();
+            }
         }
         kafkaConsumer.unsubscribe();
     }

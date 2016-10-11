@@ -39,9 +39,11 @@ public class Main {
 
         Properties consumerProps = new Properties();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHostAndPort);
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "loader-results");
+        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "Group"+System.currentTimeMillis());
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
+        consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
+
         ResultConsumer resultConsumer = new ResultConsumer(new KafkaConsumer<>(consumerProps));
 
         System.out.println("Sending instructions to Kafka on " + kafkaHostAndPort);
@@ -53,7 +55,7 @@ public class Main {
                 Integer.valueOf(numberOfMessages));
 
         // Listen to the result queue until the 'numberOfMessages' is received.
-        System.out.println("Listening to " + topic+"-res" + " for responses.");
+        System.out.println("Listening to " + topic+"-res" + " for " + numberOfMessages + " responses.");
         resultConsumer.waitforNMessages(topic+"-res", Integer.valueOf(numberOfMessages));
         long stopTime = System.currentTimeMillis();
         System.out.println("Stop time: " + stopTime);

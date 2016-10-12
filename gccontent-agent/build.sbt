@@ -43,4 +43,4 @@ assemblyMergeStrategy in assembly := {
     oldStrategy(x)
 }
 
-mainClass in assembly := Some("ie.blawlor.worker.Main")
+mainClass in assembly := Some("ie.blawlor.fieldofgenes.gccontent.agent.Main")

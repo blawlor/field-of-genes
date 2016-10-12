@@ -1,4 +1,4 @@
-package ie.blawlor.worker
+package ie.blawlor.fieldofgenes.gccontent.agent
 
 import akka.actor._
 import akka.kafka.scaladsl.{Consumer, Producer}
@@ -6,7 +6,7 @@ import akka.kafka.{ConsumerSettings, ProducerMessage, ProducerSettings, Subscrip
 import akka.stream.ActorMaterializer
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.Logger
-import ie.blawlor.fieldofgenes.RefSeqLoader
+import ie.blawlor.fieldofgenes.gccontent.GCContent
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
@@ -34,8 +34,8 @@ object Main {
   case class Parameters(kafkaPort: Int = 9092,
                         kafkaHost: String = "127.0.0.1")
 
-  val parser = new OptionParser[Parameters]("kgd") {
-    head("kgd")
+  val parser = new OptionParser[Parameters]("gc") {
+    head("gc")
     opt[Int]('j', "kafka-port") action {(x,c) =>
       c.copy(kafkaPort = x)} text "The kafka port number to use"
     opt[String]('k', "kafka-hostname") action {(x,c) =>
@@ -49,28 +49,28 @@ object Main {
         val kafkaPort = parameters.kafkaPort
         val kafkaHost = parameters.kafkaHost
         // Override the configuration of the port when specified as program argument
-        val config = ConfigFactory.parseString(s"kgd.kafka.port = $kafkaPort").
-          withFallback(ConfigFactory.parseString(s"kgd.kafka.host = $kafkaHost")).
+        val config = ConfigFactory.parseString(s"gc.kafka.port = $kafkaPort").
+          withFallback(ConfigFactory.parseString(s"gc.kafka.host = $kafkaHost")).
           withFallback(ConfigFactory.load())
 
-        implicit val system = ActorSystem("kgd", config)
+        implicit val system = ActorSystem("gc", config)
         implicit val materializer = ActorMaterializer()
 
-        logger.warn(s"Agent $agentid is about to create a consumer of loader topic on $kafkaHost server using port $kafkaPort")
+        logger.warn(s"Agent $agentid is about to create a consumer of gccontent topic on $kafkaHost server using port $kafkaPort")
         val consumerSettings = ConsumerSettings(system, new StringDeserializer, new StringDeserializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)
-          .withGroupId("group1")
+          .withGroupId("group2")
           .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
         val producerSettings = ProducerSettings(system, new StringSerializer, new StringSerializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)
-        val subscription = Subscriptions.topics("loader")
+        val subscription = Subscriptions.topics("gccontent")
 
         Consumer.committableSource(consumerSettings, subscription)
           .map { committableMessage =>
-            logger.warn(s"Doing work with ${committableMessage.record.value()}")
-            val resultString = performWork(committableMessage.record.value, kafkaHost, kafkaPort)
+            logger.warn(s"Triggering work with ${committableMessage.record.value()}")
+            val resultString = performWork(system, kafkaHost, kafkaPort, materializer)
             ProducerMessage.Message(new ProducerRecord[String, String](
-              "loader-res",
+              "gccontent-res",
               resultString), committableMessage.committableOffset)
           }
           .runWith(Producer.commitableSink(producerSettings))
@@ -78,7 +78,25 @@ object Main {
     }
   }
 
-  def performWork(instruction: String, kafkaHost: String, kafkaPort: Int):String= {
-    RefSeqLoader.load(instruction, "ref-seq", kafkaHost + ":" + kafkaPort)
+  def performWork(system: ActorSystem, kafkaHost: String, kafkaPort: Int, materializer:ActorMaterializer):String= {
+    // Create a stream from ref-seq to refseq-gccontent
+    implicit val m = materializer
+    val consumerSettings = ConsumerSettings(system, new StringDeserializer, new StringDeserializer)
+      .withBootstrapServers(kafkaHost+":"+kafkaPort)
+      .withGroupId("group3")
+      .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+    val producerSettings = ProducerSettings(system, new StringSerializer, new StringSerializer)
+      .withBootstrapServers(kafkaHost+":"+kafkaPort)
+
+    val subscription = Subscriptions.topics("ref-seq")
+    Consumer.committableSource(consumerSettings, subscription)
+      .map { committableMessage =>
+        val resultString = ""+GCContent.calculateGC(committableMessage.record.value())
+        ProducerMessage.Message(new ProducerRecord[String, String](
+          "ref-seq-gccontent",
+          resultString), committableMessage.committableOffset)
+      }
+      .runWith(Producer.commitableSink(producerSettings))
+    "complete"
   }
 }

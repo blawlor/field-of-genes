@@ -1,6 +1,6 @@
 version: '2'
 services:
-  loader:
+  gccontent:
     image: blawlor/gccontent-agent
     environment:
       KAFKA_HOST: ${KAFKA_HOST}

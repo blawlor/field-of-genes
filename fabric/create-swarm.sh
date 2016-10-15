@@ -9,7 +9,7 @@ source ./set-do-token.sh
 export DIGITALOCEAN_IMAGE=debian-8-x64
 export DIGITALOCEAN_PRIVATE_NETWORKING=true
 export DIGITALOCEAN_SIZE=8gb
-export DIGITALOCEAN_REGION=lon1
+export DIGITALOCEAN_REGION=ams3
 
 docker-machine create -d digitalocean --digitalocean-size=2gb kvstore
 export KV_IP=$(docker-machine ssh kvstore 'ifconfig eth1 | grep "inet addr:" | cut -d: -f2 | cut -d" " -f1')

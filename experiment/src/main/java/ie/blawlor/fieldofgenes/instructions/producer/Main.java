@@ -29,8 +29,15 @@ public class Main {
         String kafkaHostAndPort = args[0];
         String topic = args[1];
         String messageFileName = args[2];
-        String numberOfMessages = args[3];
-
+        String numberOfMessage = args[3];
+        String resultTopic = null;
+        String numberOfSeconds = null;
+        if (args.length > 4) {
+            resultTopic = args[4];
+        }
+        if (args.length > 5) {
+            numberOfSeconds = args[5];
+        }
         Properties producerProps = new Properties();
         producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaHostAndPort);
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
@@ -44,7 +51,6 @@ public class Main {
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
 
-        ResultConsumer resultConsumer = new ResultConsumer(new KafkaConsumer<>(consumerProps));
 
         System.out.println("Sending instructions to Kafka on " + kafkaHostAndPort);
         long startTime = System.currentTimeMillis();
@@ -52,15 +58,25 @@ public class Main {
         instructionProducer.writeFileToTopic(
                 ClassLoader.getSystemResourceAsStream(messageFileName),
                 topic,
-                Integer.valueOf(numberOfMessages));
+                Integer.valueOf(numberOfMessage));
 
-        // Listen to the result queue until the 'numberOfMessages' is received.
-        System.out.println("Listening to " + topic+"-res" + " for " + numberOfMessages + " responses.");
-        resultConsumer.waitforNMessages(topic+"-res", Integer.valueOf(numberOfMessages));
-        long stopTime = System.currentTimeMillis();
-        System.out.println("Stop time: " + stopTime);
-        System.out.println("Elapsed time: " + (stopTime - startTime));
-        resultConsumer.close();
+        if (resultTopic == null || !resultTopic.equalsIgnoreCase("ignore")) {
+            ResultConsumer resultConsumer = new ResultConsumer(new KafkaConsumer<>(consumerProps));
+
+            if (resultTopic == null) {
+                System.out.println("Listening to " + topic + "-res" + " for " + numberOfMessage + " responses.");
+                resultConsumer.waitforNMessages(topic + "-res", Integer.valueOf(numberOfMessage));
+            } else {
+                System.out.println("Listening to " + resultTopic + " for " + numberOfSeconds + " seconds.");
+                resultConsumer.waitUntilNSeconds(resultTopic, Integer.valueOf(numberOfSeconds));
+            }
+            long stopTime = System.currentTimeMillis();
+            if (resultTopic != null) {
+                stopTime = stopTime - (Integer.valueOf(numberOfSeconds) * 1000);
+            }
+            System.out.println("Stop time: " + stopTime);
+            System.out.println("Elapsed time: " + (stopTime - startTime));
+            resultConsumer.close();
+        }
     }
-
 }

@@ -22,5 +22,19 @@
 {"id":"21", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"21"}
 {"id":"22", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"22"}
 {"id":"23", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"23"}
-
-
+{"id":"24", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"4"}
+{"id":"25", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"5"}
+{"id":"26", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"6"}
+{"id":"27", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"7"}
+{"id":"28", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"8"}
+{"id":"29", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"9"}
+{"id":"30", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"0"}
+{"id":"31", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"1"}
+{"id":"32", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"2"}
+{"id":"33", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"3"}
+{"id":"34", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"4"}
+{"id":"35", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"5"}
+{"id":"36", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"6"}
+{"id":"37", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"7"}
+{"id":"38", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"8"}
+{"id":"39", "url-root":"ftp://ftp.ncbi.nlm.nih.gov/blast/db/","file-template":"refseq_genomic.NNN.tar.gz","entry-number":"9"}

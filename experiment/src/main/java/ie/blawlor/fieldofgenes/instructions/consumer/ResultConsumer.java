@@ -30,6 +30,21 @@ public class ResultConsumer {
         kafkaConsumer.unsubscribe();
     }
 
+    public void waitUntilNSeconds(String topic, int secondsOfSilence) {
+        List<String> topics = new ArrayList<>();
+        topics.add(topic);
+        kafkaConsumer.subscribe(topics);
+        boolean messagesFlowing = true;
+        while(messagesFlowing){
+            ConsumerRecords<String, String> records = kafkaConsumer.poll(secondsOfSilence*1000);
+            if (records.count() == 0) {
+                System.out.println("No messages received in " + secondsOfSilence + " seconds. Assuming equilibrium");
+                messagesFlowing = false;
+            }
+        }
+        kafkaConsumer.unsubscribe();
+    }
+
     public void close(){
         kafkaConsumer.close();
     }

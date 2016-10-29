@@ -7,11 +7,11 @@ cd ../loader-agent
 ./up.sh $n
 sleep 5
 cd ../experiment
-./ex1.sh $n
+./load.sh $n
 cd ../loader-agent
 ./down.sh
 cd ../gccontent-agent
 ./up.sh $n
 cd ../experiment
-./ex3.sh $n
+./run.sh $n
 

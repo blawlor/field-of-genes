@@ -1,6 +1,5 @@
 FROM ubuntu:16.10
 
-# Java is already installed
 # apt update and install global requirements
 RUN apt-get clean all && \
     apt-get update && \

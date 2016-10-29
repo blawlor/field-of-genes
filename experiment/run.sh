@@ -5,7 +5,7 @@ source ./set-kafka-address.sh
 cd ../experiment
 # Set the experiment going without any timing - just send the messages.
 export start=$(date +%s)
-java -jar target/experiment-1.0-SNAPSHOT-jar-with-dependencies.jar $KAFKA_HOST:$KAFKA_PORT gccontent gccontent-instructions $n ignore
+docker run --rm blawlor/experiment $KAFKA_HOST:$KAFKA_PORT gccontent gccontent-instructions $n ignore
 sleep 5 # Wait 5 seconds before trying to read the output queue
 export nummessages=$(docker run -it --rm -e ZK_HOST=$ZK_HOST -e ZK_PORT=$ZK_PORT wurstmeister/kafka:0.10.0.0 /opt/kafka_2.11-0.10.0.0/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list $KAFKA_HOST:$KAFKA_PORT --topic ref-seq-gccontent --time -1 --offsets 1 | awk -F  ":" '{sum += $3} END {print sum}')
 echo Number of messages in output topic: $nummessages

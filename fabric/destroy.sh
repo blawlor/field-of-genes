@@ -1,2 +1,2 @@
-docker-machine rm -f $(docker-machine ls -q --filter "swarm=queenbee")
-docker-machine rm -f kvstore
+docker-machine rm -f queeenbee
+docker-machine rm -f $(docker-machine ls -q --filter "name=workerbee*")

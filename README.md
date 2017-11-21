@@ -25,10 +25,11 @@ docker run -it --rm blawlor/loader-benchmark f t
 ``` 
 ### GC Content Benchmark
 
-1. In _gccontent-lib_, _after having run the loader benchmark_:
+1. In _gccontent-lib_::
 ```
-docker run -it --rm blawlor/gccontent-experiment f t
+docker run -it --rm blawlor/gccontent-benchmark f t
 ```
+This will first download the required number of files and then run the gccontent code on those files.
 
 ## Experiment
 

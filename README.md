@@ -6,6 +6,9 @@ All components required to reproduce the Field of Genes experiment are provided 
 The experiment is broken down into 2 sections: Benchmark and Experiment.
 The Benchmark is further broken down into Loader and GC Content, but the Experiment performs both Loader and GC Content together.
 
+*Important Notice*
+Because of Docker Swarms changes in the last 12 months and the change in the way it is supported in Digital Ocean, I will be re-writing this experiment to use Kubernetes. The first implementation will use Google Cloud. 
+
 ## Benchmark
 In this section, we test the performance and scalability of Field Of Genes when
 first populating it with RefSeq data. 
@@ -25,10 +28,11 @@ docker run -it --rm blawlor/loader-benchmark f t
 ``` 
 ### GC Content Benchmark
 
-1. In _gccontent-lib_, _after having run the loader benchmark_:
+1. In _gccontent-lib_::
 ```
-docker run -it --rm blawlor/gccontent-experiment f t
+docker run -it --rm blawlor/gccontent-benchmark f t
 ```
+This will first download the required number of files and then run the gccontent code on those files.
 
 ## Experiment
 

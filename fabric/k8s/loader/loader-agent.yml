@@ -1,0 +1,21 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: loader-agent
+spec:
+  template:
+    metadata:
+      labels:
+        app: loader
+    spec:
+      containers:
+      - name: loader-agent
+        image: blawlor/loader-agent:latest
+        ports:
+        - containerPort: 9092
+        env:
+        - name: KAFKA_PORT
+          value: "9092"
+        - name: KAFKA_HOST
+          value: kafka-0.broker.kafka.svc.cluster.local

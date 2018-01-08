@@ -1,6 +1,5 @@
 package ie.blawlor.fieldofgenes.producer;
 
-import net.sf.jfasta.FASTAElement;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -9,9 +8,6 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class RefSeqProducer {
 
@@ -67,8 +63,10 @@ public class RefSeqProducer {
             untar(rootFileName);
             invokeBlastDbCmd(rootFileName);
         } catch (IOException ex) {
+            System.out.println("Ooops one");
             ex.printStackTrace();
         } catch (InterruptedException e) {
+            System.out.println("Ooops two");
             e.printStackTrace();
         }
     }
@@ -86,27 +84,48 @@ public class RefSeqProducer {
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, bytesRead);
         }
-        System.out.println("FTP Download complete");
-        inputStream.close();
+        System.out.println("FTP Download is now complete");
+//            System.out.println("About to close input stream");
+//            inputStream.close();
         outputStream.close();
+        System.out.println("Streams closed");
     }
 
-    private void unzip(String rootFileName) throws IOException {
-        byte[] buffer = new byte[BUFFER_SIZE];
-        File gzFile = new File(DOWNLOADS_DIR+"/"+rootFileName+".tar.gz");
-        GzipCompressorInputStream gzIn = new GzipCompressorInputStream(new FileInputStream(gzFile));
-        FileOutputStream out = new FileOutputStream(DOWNLOADS_DIR+"/"+rootFileName+".tar");
-        int n = 0;
-        while (-1 != (n = gzIn.read(buffer))) {
-            out.write(buffer, 0, n);
+//    private void unzip(String rootFileName) throws IOException {
+//        System.out.println("About to unzip");
+//        byte[] buffer = new byte[BUFFER_SIZE];
+//        File gzFile = new File(DOWNLOADS_DIR+"/"+rootFileName+".tar.gz");
+//        GzipCompressorInputStream gzIn = new GzipCompressorInputStream(new FileInputStream(gzFile));
+//        FileOutputStream out = new FileOutputStream(DOWNLOADS_DIR+"/"+rootFileName+".tar");
+//        int n = 0;
+//        while (-1 != (n = gzIn.read(buffer))) {
+//            System.out.print(".");
+//            out.write(buffer, 0, n);
+//        }
+//        out.close();
+//        gzIn.close();
+//        gzFile.delete();
+//        System.out.println("Unzipping complete");
+//    }
+
+    private static void unzip(String rootFileName) throws IOException, InterruptedException {
+        System.out.println("About to unzip");
+        File destDir = new File(DATABASES_ROOT_DIR + "/" + generateBaseFileName(rootFileName));
+        destDir.mkdirs();
+        String zipfileName = DOWNLOADS_DIR + "/" + rootFileName + ".tar.gz";
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "gunzip", zipfileName)
+                .inheritIO();
+        int result = processBuilder.start().waitFor();
+        if (result == 0) {
+            System.out.println("Unzipping complete");
+        } else {
+            System.out.println("Unzipping failed");
         }
-        out.close();
-        gzIn.close();
-        gzFile.delete();
-        System.out.println("Unzipping complete");
     }
 
     private static void untar(String rootFileName) throws IOException, InterruptedException {
+        System.out.println("About to untar");
         File destDir = new File(DATABASES_ROOT_DIR + "/" + generateBaseFileName(rootFileName));
         destDir.mkdirs();
         String tarfileName = DOWNLOADS_DIR + "/" + rootFileName + ".tar";
@@ -187,12 +206,13 @@ public class RefSeqProducer {
                 line = br.readLine();
             }
         }
-
+        System.out.println("Fasta file sent to Kafka.");
         br.close();
         fastaFile.delete();
     }
 
     private void processSequence(String topic, String key, StringBuilder sequence){
+        System.out.print(".");
         ProducerRecord<String, String> producerRecord =
                 new ProducerRecord<>(topic,
                         key,

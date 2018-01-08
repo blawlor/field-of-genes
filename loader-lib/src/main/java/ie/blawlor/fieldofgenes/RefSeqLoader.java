@@ -33,6 +33,7 @@ public class RefSeqLoader {
             long elapsed = ended - started;
             return successMessage(refSeqProducer.getId(), elapsed);
         } catch (IOException e) {
+            System.out.println("IO Exception when loading the file");
             e.printStackTrace();
             return "{\"id\":" + refSeqProducer.getId() + "\"result\": \"Error: " + e.getMessage() + "\"}";
         } finally {

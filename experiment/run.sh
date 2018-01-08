@@ -1,18 +1,19 @@
 #!/bin/bash
-n=${1-32} #If not supplied, defaults to 32.
-cd ../fabric
-source ./set-kafka-address.sh
-cd ../experiment
-# Set the experiment going without any timing - just send the messages.
+topic=$1
+message_file_name=$2
+number_of_messages=$3
+result_topic=$4
 export start=$(date +%s)
-docker run --rm blawlor/experiment $KAFKA_HOST:$KAFKA_PORT gccontent gccontent-instructions $n ignore
+echo Starting experiment at $start
+java -Xms512m -Xmx2048m -jar experiment.jar kafka-0.broker.kafka.svc.cluster.local:9092 $topic $message_file_name $number_of_messages $result_topic
 sleep 5 # Wait 5 seconds before trying to read the output queue
-export nummessages=$(docker run -it --rm -e ZK_HOST=$ZK_HOST -e ZK_PORT=$ZK_PORT wurstmeister/kafka:0.10.0.0 /opt/kafka_2.11-0.10.0.0/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list $KAFKA_HOST:$KAFKA_PORT --topic ref-seq-gccontent --time -1 --offsets 1 | awk -F  ":" '{sum += $3} END {print sum}')
+# --bootstrap-server bootstrap.kafka.svc.cluster.local:9092 --describe --group
+export nummessages=$(/opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server bootstrap.kafka.svc.cluster.local:9092 --describe --group experiment | grep $result_topic  | awk '{sum += $4} END {print sum}')
 echo Number of messages in output topic: $nummessages
 while true
 do
-sleep 10
-export newnummessages=$(docker run -it --rm -e ZK_HOST=$ZK_HOST -e ZK_PORT=$ZK_PORT wurstmeister/kafka:0.10.0.0 /opt/kafka_2.11-0.10.0.0/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list $KAFKA_HOST:$KAFKA_PORT --topic ref-seq-gccontent --time -1 --offsets 1 | awk -F  ":" '{sum += $3} END {print sum}') 
+sleep 10 #Make this a variable
+export newnummessages=$(/opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server kafka-0.broker.kafka.svc.cluster.local:9092 --describe --group experiment | grep $result_topic | awk '{sum += $4} END {print sum}')
 echo $nummessages
 if [ "$newnummessages" == "$nummessages" ]; then
   break;
@@ -21,6 +22,6 @@ export nummessages=$newnummessages
 done
 export stop=$(date +%s)
 
-let "time=($stop-$start)-10"
+let "time=($stop-$start)-10" #Note 10 = variable
 
 echo $time seconds

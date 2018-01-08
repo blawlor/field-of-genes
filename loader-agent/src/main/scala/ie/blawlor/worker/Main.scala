@@ -79,6 +79,8 @@ object Main {
   }
 
   def performWork(instruction: String, kafkaHost: String, kafkaPort: Int):String= {
-    RefSeqLoader.load(instruction, "ref-seq", kafkaHost + ":" + kafkaPort)
+    val result = RefSeqLoader.load(instruction, "refseq", kafkaHost + ":" + kafkaPort)
+    logger.warn("Finished Perform Work")
+    result
   }
 }

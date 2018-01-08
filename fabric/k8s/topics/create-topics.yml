@@ -1,0 +1,125 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: topic-loader
+  namespace: kafka
+spec:
+  template:
+    spec:
+      containers:
+      - name: topic-loader
+        image: solsson/kafka:1.0.0@sha256:17fdf1637426f45c93c65826670542e36b9f3394ede1cb61885c6a4befa8f72d
+        command:
+        - ./bin/kafka-topics.sh
+        - --zookeeper
+        -   zookeeper.kafka.svc.cluster.local:2181
+        - --create
+        - --if-not-exists
+        - --topic
+        -   loader
+        - --partitions
+        -   "$PARTITIONS"
+        - --replication-factor
+        -   "1"
+      restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: topic-gccontent
+  namespace: kafka
+spec:
+  template:
+    spec:
+      containers:
+      - name: topic-gccontent
+        image: solsson/kafka:1.0.0@sha256:17fdf1637426f45c93c65826670542e36b9f3394ede1cb61885c6a4befa8f72d
+        command:
+        - ./bin/kafka-topics.sh
+        - --zookeeper
+        -   zookeeper.kafka.svc.cluster.local:2181
+        - --create
+        - --if-not-exists
+        - --topic
+        -   gccontent
+        - --partitions
+        -   "$PARTITIONS"
+        - --replication-factor
+        -   "1"
+      restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: topic-refseq
+  namespace: kafka
+spec:
+  template:
+    spec:
+      containers:
+      - name: topic-refseq
+        image: solsson/kafka:1.0.0@sha256:17fdf1637426f45c93c65826670542e36b9f3394ede1cb61885c6a4befa8f72d
+        command:
+        - ./bin/kafka-topics.sh
+        - --zookeeper
+        -   zookeeper.kafka.svc.cluster.local:2181
+        - --create
+        - --if-not-exists
+        - --topic
+        -   refseq
+        - --partitions
+        -   "$PARTITIONS"
+        - --replication-factor
+        -   "1"
+      restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: topic-refseq-gccontent
+  namespace: kafka
+spec:
+  template:
+    spec:
+      containers:
+      - name: topic-refseq-gccontent
+        image: solsson/kafka:1.0.0@sha256:17fdf1637426f45c93c65826670542e36b9f3394ede1cb61885c6a4befa8f72d
+        command:
+        - ./bin/kafka-topics.sh
+        - --zookeeper
+        -   zookeeper.kafka.svc.cluster.local:2181
+        - --create
+        - --if-not-exists
+        - --topic
+        -   refseq-gccontent
+        - --partitions
+        -   "$PARTITIONS"
+        - --replication-factor
+        -   "1"
+      restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: topic-loader-res
+  namespace: kafka
+spec:
+  template:
+    spec:
+      containers:
+      - name: topic-loader-res
+        image: solsson/kafka:1.0.0@sha256:17fdf1637426f45c93c65826670542e36b9f3394ede1cb61885c6a4befa8f72d
+        command:
+        - ./bin/kafka-topics.sh
+        - --zookeeper
+        -   zookeeper.kafka.svc.cluster.local:2181
+        - --create
+        - --if-not-exists
+        - --topic
+        -   loader-res
+        - --partitions
+        -   "$PARTITIONS"
+        - --replication-factor
+        -   "1"
+      restartPolicy: Never
+---

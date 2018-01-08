@@ -46,7 +46,7 @@ public class Main {
 
         Properties consumerProps = new Properties();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHostAndPort);
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "Group"+System.currentTimeMillis());
+        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "experiment");
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
@@ -59,24 +59,29 @@ public class Main {
                 ClassLoader.getSystemResourceAsStream(messageFileName),
                 topic,
                 Integer.valueOf(numberOfMessage));
+        //Create a consumer in order to create its group. Will use this group in the experiment scripts to check
+        // topic growth in order to understand when the experiment is finished.
+        ResultConsumer resultConsumer = new ResultConsumer(new KafkaConsumer<>(consumerProps));
+        resultConsumer.waitforNMessages(resultTopic, 1); // Wait for just one message - enough to create the group
+        System.out.println("One message received on " + resultTopic);
 
-        if (resultTopic == null || !resultTopic.equalsIgnoreCase("ignore")) {
-            ResultConsumer resultConsumer = new ResultConsumer(new KafkaConsumer<>(consumerProps));
-
-            if (resultTopic == null) {
-                System.out.println("Listening to " + topic + "-res" + " for " + numberOfMessage + " responses.");
-                resultConsumer.waitforNMessages(topic + "-res", Integer.valueOf(numberOfMessage));
-            } else {
-                System.out.println("Listening to " + resultTopic + " for " + numberOfSeconds + " seconds.");
-                resultConsumer.waitUntilNSeconds(resultTopic, Integer.valueOf(numberOfSeconds));
-            }
-            long stopTime = System.currentTimeMillis();
-            if (resultTopic != null) {
-                stopTime = stopTime - (Integer.valueOf(numberOfSeconds) * 1000);
-            }
-            System.out.println("Stop time: " + stopTime);
-            System.out.println("Elapsed time: " + (stopTime - startTime));
-            resultConsumer.close();
-        }
+//        if (resultTopic != null && !resultTopic.equalsIgnoreCase("ignore")) {
+//            ResultConsumer resultConsumer = new ResultConsumer(new KafkaConsumer<>(consumerProps));
+//
+//            if (resultTopic == null) {
+//                System.out.println("Listening to " + topic + "-res" + " for " + numberOfMessage + " responses.");
+//                resultConsumer.waitforNMessages(topic + "-res", Integer.valueOf(numberOfMessage));
+//            } else {
+//                System.out.println("Listening to " + resultTopic + " for " + numberOfSeconds + " seconds.");
+//                resultConsumer.waitUntilNSeconds(resultTopic, Integer.valueOf(numberOfSeconds));
+//            }
+//            long stopTime = System.currentTimeMillis();
+//            if (resultTopic != null) {
+//                stopTime = stopTime - (Integer.valueOf(numberOfSeconds) * 1000);
+//            }
+//            System.out.println("Stop time: " + stopTime);
+//            System.out.println("Elapsed time: " + (stopTime - startTime));
+//            resultConsumer.close();
+//        }
     }
 }

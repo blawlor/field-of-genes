@@ -68,7 +68,7 @@ object Main {
         val producerSettings = ProducerSettings(system, new StringSerializer, new StringSerializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)
         val gccontentSubscription = Subscriptions.topics("gccontent")
-        val sequenceSubscription = Subscriptions.topics("ref-seq")
+        val sequenceSubscription = Subscriptions.topics("refseq")
 
         val sequenceConsumerSettings = ConsumerSettings(system, new StringDeserializer, new StringDeserializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)
@@ -82,7 +82,7 @@ object Main {
           .map{ committableMessage =>
             val resultString = ""+GCContent.calculateGC(committableMessage.record.value())
             ProducerMessage.Message(new ProducerRecord[String, String](
-              "ref-seq-gccontent",
+              "refseq-gccontent",
               resultString), committableMessage.committableOffset)
           }
 

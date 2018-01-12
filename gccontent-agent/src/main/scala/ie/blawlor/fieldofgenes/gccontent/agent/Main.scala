@@ -60,7 +60,7 @@ object Main {
         implicit val materializer = ActorMaterializer()
         implicit val executionContext: ExecutionContext = materializer.executionContext
 
-        logger.warn(s"Agent $agentid is about to create a consumer of loader topic on $kafkaHost server using port $kafkaPort")
+        logger.warn(s"Agent $agentid is about to create a consumer of gccontent topic on $kafkaHost server using port $kafkaPort")
         val gcConsumerSettings = ConsumerSettings(system, new StringDeserializer, new StringDeserializer)
           .withBootstrapServers(kafkaHost+":"+kafkaPort)
           .withGroupId("group2")

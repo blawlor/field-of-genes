@@ -38,6 +38,8 @@ public class Main {
         if (args.length > 5) {
             numberOfSeconds = args[5];
         }
+        String groupName = resultTopic+"-group";
+
         Properties producerProps = new Properties();
         producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaHostAndPort);
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
@@ -46,7 +48,7 @@ public class Main {
 
         Properties consumerProps = new Properties();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHostAndPort);
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "experiment");
+        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupName);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
@@ -63,7 +65,7 @@ public class Main {
         // topic growth in order to understand when the experiment is finished.
         ResultConsumer resultConsumer = new ResultConsumer(new KafkaConsumer<>(consumerProps));
         resultConsumer.waitforNMessages(resultTopic, 1); // Wait for just one message - enough to create the group
-        System.out.println("One message received on " + resultTopic);
+        System.out.println("One message received on " + resultTopic + " using group " + groupName);
 
 //        if (resultTopic != null && !resultTopic.equalsIgnoreCase("ignore")) {
 //            ResultConsumer resultConsumer = new ResultConsumer(new KafkaConsumer<>(consumerProps));

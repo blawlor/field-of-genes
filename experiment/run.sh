@@ -16,14 +16,19 @@ while true
 do
 sleep 10 #Make this a variable
 export newnummessages=$(/opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server kafka-0.broker.kafka.svc.cluster.local:9092 --describe --group ${result_topic}-group | grep $result_topic | awk '{sum += $4} END {print sum}')
-echo $nummessages
+echo $newnummessages
 if [ "$newnummessages" == "$nummessages" ]; then
-  break;
+  sleep 10
+  export newnummessages=$(/opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server kafka-0.broker.kafka.svc.cluster.local:9092 --describe --group ${result_topic}-group | grep $result_topic | awk '{sum += $4} END {print sum}')
+  echo Rechecking: $newnummessages
+  if [ "$newnummessages" == "$nummessages" ]; then
+    break;
+  fi
 fi
 export nummessages=$newnummessages
 done
 export stop=$(date +%s)
 
-let "time=($stop-$start)-10" #Note 10 = variable
+let "time=($stop-$start)-20" 
 
 echo $time seconds

@@ -78,64 +78,14 @@ In order to measure the run times of the experiment, we need a mechanism for tri
     ./create-topics.sh 4
     cd ..
 2. Launch the required number of loader agents. E.g. to launch 4:
-	kubectl apply -f loader
-    ./scale-loader 4
-3. Keep checking the state of the kubernetes cluster until all pods are Running, using
-    kubectl get all
-4. Run the loader experiment, specifying the parallelization factor. E.g for parallelization factor 4:
+	./deploy-loader-agents.sh 4
+3. Run the loader experiment, specifying the parallelization factor and monitor the logs. E.g for parallelization factor 4:
 	cd loader-experiment
     ./loader-experiment.sh 4
     cd ..
-5. Monitor the logs of the experiment pod by first looking for its name (it will be of the form loader-experiment-xxxxx), and then logging it:
-	kubctl get pods
-    kubctl logs -f podname
-The experimental results for loader will be displayed in the logs.
-
-#### Loader Benchmark
-The Benchmark involves running a simple
-multi-threaded Java program on DigitalOcean using 4, 8 and 12 threads. This program
-simply downloads, unzips, untars and converts the NCBI RefSeq files.
-
-To measure the time taken to download _f_ files using _t_ threads, run the following commands:
-
-1. In _fabric_:
-```
-./create-benchmark.sh
-eval $(docker-machine env benchmark)
-docker run -it --rm blawlor/loader-benchmark f t
-``` 
-### GC Content Benchmark
-
-1. In _gccontent-lib_, _after having run the loader benchmark_:
-```
-docker run -it --rm blawlor/gccontent-experiment f t
-```
-
-## Experiment
-
-### Loader and GC Experiment
-To perform the experiment, follow these steps:
-1. In _fabric_:
-```
-./create-swarm.sh 8
-eval $(docker-machine env --swarm queenbee)
-```
-2. In base directory:
-```
-./run.sh 8 4
-```
-The two steps above are for a node of size 8, and a parallelization factor of 4.
-For bigger clusters and higher parallelization factors, just replace the values of 12 and 4 above as appropriate.
-
-3. In base directory:
-```
-./clean.sh
-```
-This removes any agents that are running, brings the kafka cluster down, clears any dangling volumes on the docker swarm but leaves the hosts intact. 
-
-4. In _fabric_
-```
-./destroy.sh
-```
-
-Do this at the end of all experiments in order to remove all hosts from Digital Ocean.
+4. Launch the required number of gccontent agents: E.g. to launch 4:
+	./deploy-gccontent-agents.sh 4
+5. Run the gccontent experiment, specifying the parallelization factor and monitor the logs. E.g for parallelization factor 4:
+	cd gccontent-experiment
+    ./gccontent-experiment.sh 4
+    cd ..

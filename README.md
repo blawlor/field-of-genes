@@ -10,7 +10,7 @@ The rest of this README assumes that these steps are complete: that the images r
 
 ## Running the Experiment
 
-###Requirements
+### Requirements
 These instructions assume the following about your environment.
 * **Linux**: You are running a bash shell in a Linux environment.
 * **gcloud**: You have installed the [gcloud sdk](https://cloud.google.com/sdk/) - a command line utility to manage Google Cloud resources.
@@ -18,7 +18,7 @@ These instructions assume the following about your environment.
 
 The objective is to test the hypothesis that Kafka is a scalable data repository for bioinformatic data (in this case, the RefSeq genomic database). We compare Kafka's scalability characteristics with the flat BLAST-format files that are downloadable from [NCBI](https://www.ncbi.nlm.nih.gov/refseq/). We use a [GC Content](https://en.wikipedia.org/wiki/GC-content) calculation as a placeholder algorithm to provide the comparison, but any per-sequence processing algorithm could be substituted. When we talk about 'processing' in this text, we are referring to GC Content.
 
-###Kubernetes on Google Cloud
+### Kubernetes on Google Cloud
 All code is run on the cloud, using [Kubernetes(k8s)](https://kubernetes.io/)-orchestrated [Docker](https://www.docker.com/) containers. We have used [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/) (GKE) as our platform and you will need a Google Cloud account to run this experiment. Note that this is a *paid platform*. You will be charged by Google for resources used, so make sure to destroy your k8s cluser *and any extra SSDs* that are created using your account, when you are finished an experimental run. For cluster sizes of 8 and larger, Google may ask you to increase your [quotas](https://cloud.google.com/compute/quotas).
 
 Although the provided instructions for creating the k8s cluster are specific to GKE (i.e they use [gcloud](https://cloud.google.com/sdk/gcloud/), most of the k8s deployment instructions will work on k8s clusters hosted elsewhere (e.g. Azure, or on a private k8s cluster if you have access to one). The only known exceptions are the storage configuration yml files mentioned in the instructions below, would would need to be substituted with platform-specific alternatives.
@@ -27,7 +27,7 @@ In order for the gcloud scripts (described in more detail below) to work, you wi
 
 Alternatively, [contact the author](mailto:brendan.lawlor@gmail.com) to arrange the temporary use of his account if you are reviewing this experiment for a publication.
 
-###Experiment Design
+### Experiment Design
 
 The experiment is broken down into 2 sections: Benchmark and Experiment. The Benchmark measures the speed at which we can process increasing amounts of RefSeq fasta-format data, on a single node (flat files residing on a linux file system are, by their nature, not distributed). The Experiment measures the processing of these same sequences from a Kafka topic, on Kafka cluster sizes of 4, 8 and 12 nodes, using [Akka](https://akka.io/) actors. The Akka actors are simply vehicles for invoking the same GC Content code as the Benchmark, but in the parallel, streamed and distributed manner that the Kafka topic facilites. We chose Akka because this is a technology we are familiar with from other research.
 
@@ -54,15 +54,15 @@ This creates a single-worker-node Kubernetes cluster and launches the gccontent-
 Running the experiment is more complex and can be viewed as two phases:
 
 #### Prepare the Kafka cluster
-#####Overview
+##### Overview
 We must create a multi-node kubernetes cluster (4,8 or 12 nodes) and then bring up a multi-node Kafka cluster including its accompanying Zookeeper instances. To do this, we have leaned heavily on the work done by [yolean](https://github.com/Yolean/kubernetes-kafka).
-#####Detailed steps:
+##### Detailed steps:
 1. Run the ```create-k8s-cluster.sh``` script, passing in the cluster size. E.g. 
 	./create-k8s-cluster.sh 4
 
 
 #### Run the experiment
-#####Overview
+##### Overview
 For each configuration of node size and number of files/sequences/parallelization factor, we must create the specified topics with the correct number of partitions, launch loader agents that can populate the Kafka ```refseq``` topic and then launch gc-content agents capable of running the gc-content algorithm in a parallel and coordinated way on the Kafka refseq topic, putting the results into the ```refseq-gccontent``` topic.
 In order to measure the run times of the experiment, we need a mechanism for triggering them at the same time, and detecting when processing is complete. In a distributed system like this, it is not trivial. What follows is an overview of how we achieve this:
 

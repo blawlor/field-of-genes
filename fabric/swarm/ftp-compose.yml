@@ -1,0 +1,9 @@
+pureftpd:
+  image: vimagick/pure-ftpd
+  ports:
+    - "21:21"
+  volumes:
+    - /mnt/volume-nyc1-01:/home/ftpuser
+    - ./data/pure-ftpd:/etc/pure-ftpd
+  privileged: true
+  restart: always

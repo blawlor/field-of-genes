@@ -91,23 +91,6 @@ public class RefSeqProducer {
         System.out.println("Streams closed");
     }
 
-//    private void unzip(String rootFileName) throws IOException {
-//        System.out.println("About to unzip");
-//        byte[] buffer = new byte[BUFFER_SIZE];
-//        File gzFile = new File(DOWNLOADS_DIR+"/"+rootFileName+".tar.gz");
-//        GzipCompressorInputStream gzIn = new GzipCompressorInputStream(new FileInputStream(gzFile));
-//        FileOutputStream out = new FileOutputStream(DOWNLOADS_DIR+"/"+rootFileName+".tar");
-//        int n = 0;
-//        while (-1 != (n = gzIn.read(buffer))) {
-//            System.out.print(".");
-//            out.write(buffer, 0, n);
-//        }
-//        out.close();
-//        gzIn.close();
-//        gzFile.delete();
-//        System.out.println("Unzipping complete");
-//    }
-
     private static void unzip(String rootFileName) throws IOException, InterruptedException {
         System.out.println("About to unzip");
         File destDir = new File(DATABASES_ROOT_DIR + "/" + generateBaseFileName(rootFileName));

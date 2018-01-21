@@ -58,8 +58,9 @@ Running the experiment is more complex and can be viewed as two phases:
 We must create a multi-node kubernetes cluster (4,8 or 12 nodes) and then bring up a multi-node Kafka cluster including its accompanying Zookeeper instances. To do this, we have leaned heavily on the work done by [yolean](https://github.com/Yolean/kubernetes-kafka).
 ##### Detailed steps:
 1. Run the ```create-k8s-cluster.sh``` script, passing in the cluster size. E.g. 
-	./create-k8s-cluster.sh 4
-
+```
+./create-k8s-cluster.sh 4
+```
 
 #### Run the experiment
 ##### Overview

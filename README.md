@@ -73,19 +73,28 @@ In order to measure the run times of the experiment, we need a mechanism for tri
 
 ##### Detailed Steps
 1. Create the topics, specifying the parallelization factor (i.e. the number of partitions). E.g for a parallelization factor of 4:
-
+```
 	cd topics
     ./create-topics.sh 4
     cd ..
+    ```
 2. Launch the required number of loader agents. E.g. to launch 4:
+```
 	./deploy-loader-agents.sh 4
+```
 3. Run the loader experiment, specifying the parallelization factor and monitor the logs. E.g for parallelization factor 4:
-	cd loader-experiment
+```
+    cd loader-experiment
     ./loader-experiment.sh 4
     cd ..
+```
 4. Launch the required number of gccontent agents: E.g. to launch 4:
-	./deploy-gccontent-agents.sh 4
+```
+    ./deploy-gccontent-agents.sh 4
+```
 5. Run the gccontent experiment, specifying the parallelization factor and monitor the logs. E.g for parallelization factor 4:
-	cd gccontent-experiment
+```
+    cd gccontent-experiment
     ./gccontent-experiment.sh 4
     cd ..
+```

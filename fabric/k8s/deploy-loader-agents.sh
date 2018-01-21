@@ -1,6 +1,6 @@
 scale=${1-1}
 kubectl apply -f loader
-./scale-loader.sh $scale
+kubectl scale --replicas=$scale deploy/loader-agent
 echo Waiting for $scale instances of loader to be ready.
 while true
 do

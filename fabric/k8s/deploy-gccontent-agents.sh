@@ -1,6 +1,6 @@
 scale=${1-1}
 kubectl apply -f gccontent
-./scale-gccontent.sh $scale
+kubectl scale --replicas=$scale deploy/gccontent-agent
 echo Waiting for $scale instances of gccontent-agent to be ready.
 while true
 do

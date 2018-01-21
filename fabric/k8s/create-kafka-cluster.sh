@@ -14,7 +14,7 @@ kubectl apply -f zookeeper/
 sleep 5
 kubectl apply -f kafka/
 sleep 5
-./scale-kafka.sh $nodes
+kubectl scale --replicas=$nodes statefulsets/kafka
 
 # Loop on this command until the result = $nodes
 # ./get-all.sh | grep "po/kafka-" | grep Running | wc -l

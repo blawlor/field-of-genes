@@ -42,7 +42,6 @@ The experimental runs are parameterized along two dimensions:
 * Parallelization Factor. In the case of the Benchmark code, this is the number of independent threads we create to perform the loading and gc content processing. In the case of the Experiment, this corresponds to the number of Akka actors created to do the loading/gc content processing. We also use this factor to decide how many partitions to create for each topic.
 
 
-
 ### Benchmark
 The gccontent benchmark is run by launching the gccontent-benchmark Docker image as a kubernetes Pod. The Docker image, when run, simply invokes the gccontent executable jar which first downloads and expands the stipulated number of files from NCBI, and then measures the time taken to run the gccontent algorithm over those files, using the stipulated number of threads. The ```run-benchmark-gccontent.sh``` file manages the entire process. The results will be tracked and displayed on the bash shell. For example, to run the benchmark using 4 files and 4 threads:
 
@@ -60,7 +59,9 @@ We must create a multi-node kubernetes cluster (4,8 or 12 nodes) and then bring 
 1. Run the ```create-k8s-cluster.sh``` script, passing in the cluster size. E.g. 
 ```
 ./create-k8s-cluster.sh 4
+
 ```
+This will first download the required number of files and then run the gccontent code on those files.
 
 #### Run the experiment
 ##### Overview

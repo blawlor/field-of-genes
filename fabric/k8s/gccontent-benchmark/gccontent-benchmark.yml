@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gccontent-benchmark
+  namespace: benchmark
+spec:
+  template:
+    spec:
+      containers:
+      - name: gccontent-benchmark
+        image: blawlor/gccontent-benchmark:latest
+        command: ["java", "-Xms1024m", "-Xmx6g", "-jar",  "gccontent-benchmark.jar"]
+        args: ["$FILES", "$THREADS"]
+      restartPolicy: Never
+

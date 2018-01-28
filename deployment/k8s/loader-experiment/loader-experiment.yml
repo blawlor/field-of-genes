@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: loader-experiment
+  namespace: kafka
+spec:
+  template:
+    spec:
+      containers:
+      - name: loader-experiment
+        image: blawlor/experiment:latest
+        command: ["./experiment.sh"]
+        args: ["loader", "load-instructions", "$NUMBER_OF_MESSAGES", "refseq"]
+      restartPolicy: Never
+

@@ -15,6 +15,7 @@ These instructions assume the following about your environment.
 * **Linux**: You are running a bash shell in a Linux environment.
 * **gcloud**: You have installed the [gcloud sdk](https://cloud.google.com/sdk/) - a command line utility to manage Google Cloud resources.
 * **kubectl** You have installed [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) - a command line utility to manage a Kubernetes cluster instance.
+* **docker-machine**: You have installed docker-machine. This is used to create the benchmark node.
 
 The objective is to test the hypothesis that Kafka is a scalable data repository for bioinformatic data (in this case, the RefSeq genomic database). We compare Kafka's scalability characteristics with the flat BLAST-format files that are downloadable from [NCBI](https://www.ncbi.nlm.nih.gov/refseq/). We use a [GC Content](https://en.wikipedia.org/wiki/GC-content) calculation as a placeholder algorithm to provide the comparison, but any per-sequence processing algorithm could be substituted. When we talk about 'processing' in this text, we are referring to GC Content.
 
@@ -23,7 +24,11 @@ All code is run on the cloud, using [Kubernetes(k8s)](https://kubernetes.io/)-or
 
 Although the provided instructions for creating the k8s cluster are specific to GKE (i.e they use [gcloud](https://cloud.google.com/sdk/gcloud/), most of the k8s deployment instructions will work on k8s clusters hosted elsewhere (e.g. Azure, or on a private k8s cluster if you have access to one). The only known exceptions are the storage configuration yml files mentioned in the instructions below, would would need to be substituted with platform-specific alternatives.
 
-In order for the gcloud scripts (described in more detail below) to work, you will need to have created a Google cloud project and.....[finish this]
+In order for the gcloud scripts (described in more detail below) to work, you will need to have created a Google cloud project and authenticated yourself on it. Create a file under the 'deployment/k8s' directory called set-gooogle-project.sh which sets an environment variable with the name of your Google project. Then use gcloud to authenticate using your Google account credentials:
+
+```
+gcloud auth application-default login
+```
 
 Alternatively, [contact the author](mailto:brendan.lawlor@gmail.com) to arrange the temporary use of his account if you are reviewing this experiment for a publication.
 

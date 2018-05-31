@@ -1,6 +1,8 @@
 Field of Genes
 ======
 
+See publication behind this experiment here: https://academic.oup.com/gigascience/article/7/4/giy036/4965114
+
 ## Preparing Docker images
 All components required to reproduce the Field of Genes experiment are provided here.
 

@@ -77,7 +77,7 @@ We must create a multi-node kubernetes cluster (4,8 or 12 nodes) and then bring 
 ##### Detailed steps:
 1. Run the ```create-kafka-cluster.sh``` script, passing in the cluster size. E.g. 
 ```bash
-./create-k8s-cluster.sh 4
+./create-kafka-cluster.sh 4
 ```
 Wait until this is complete. Check completion by occasionally running
 

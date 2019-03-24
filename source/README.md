@@ -13,7 +13,7 @@ This is a Java maven project that produces a library jar file with the code to l
 
 ```
 mvn clean install
-docker build -t blawlor/loader-benchmark
+docker build -t blawlor/loader-benchmark .
 ```
 
 Note: If you plan to push this image to your own public docker image registry, replace the 'blawlor' with your own registry name.
@@ -36,7 +36,7 @@ This is a Scala Akka project that produces an executable jar with a system of ac
 
 ```
 sbt clean assembly
-docker build -t blawlor/loader-agent
+docker build -t blawlor/loader-agent .
 ```
 
 ### Build output
@@ -55,7 +55,7 @@ This is a Java maven project that produces a library jar file with the gccontent
 
 ```
 mvn clean install
-docker build -t blawlor/gccontent-benchmark
+docker build -t blawlor/gccontent-benchmark .
 ```
 
 Note: If you plan to push this image to your own public docker image registry, replace the 'blawlor' with your own registry name.
@@ -77,7 +77,7 @@ This is a Scala Akka project that produces an executable jar with a system of ac
 
 ```
 sbt clean assembly
-docker build -t blawlor/gccontent-agent
+docker build -t blawlor/gccontent-agent .
 ```
 
 ### Build output
@@ -97,8 +97,8 @@ This is a Java maven project that produces a library jar file which manages and 
 ### Build Instructions
 
 ```
-sbt clean assembly
-docker build -t blawlor/gccontent-agent
+mvn clean install
+docker build -t blawlor/experiment .
 ```
 
 ### Build output
